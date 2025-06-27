@@ -58,15 +58,15 @@ class ExactOnlineConfig(object):
     a different type is explicitly mentioned). This way the callers
     won't have to think about what they get.
     """
-    def get_or_set_default(self, section, option, value):
+    def get_or_set_default(self, section, option, value, az_resource):
         """
         Base method to fetch values and to set defaults in case they
         don't exist.
         """
         try:
-            ret = self.get(section, option)
+            ret = self.get(section, option, az_resource=az_resource)
         except MissingSetting:
-            self.set(section, option, value)
+            self.set(section, option, value, az_resource=az_resource)
             ret = value
 
         return ret
@@ -80,17 +80,17 @@ class ExactOnlineConfig(object):
     def get_auth_url(self):
         return native_string(self.get_or_set_default(
             'server', 'auth_url',
-            'https://start.exactonline.nl/api/oauth2/auth'))
+            'https://start.exactonline.nl/api/oauth2/auth', az_resource='ac'))
 
     def get_rest_url(self):
         return native_string(self.get_or_set_default(
             'server', 'rest_url',
-            'https://start.exactonline.nl/api'))
+            'https://start.exactonline.nl/api', az_resource='ac'))
 
     def get_token_url(self):
         return native_string(self.get_or_set_default(
             'server', 'token_url',
-            'https://start.exactonline.nl/api/oauth2/token'))
+            'https://start.exactonline.nl/api/oauth2/token', az_resource='ac'))
 
     # [application]
     # ; These return something, or raise MissingSetting if they are
@@ -99,11 +99,11 @@ class ExactOnlineConfig(object):
     # ; to write your own routines.
 
     def get_base_url(self):
-        return native_string(self.get('application', 'base_url'))
+        return native_string(self.get('application', 'base_url', az_resource='ac'))
 
     def get_iteration_limit(self):
         return int(self.get_or_set_default(
-            'application', 'iteration_limit', '50'))
+            'application', 'iteration_limit', '50', az_resource='ac'))
 
     def get_response_url(self):
         """
@@ -116,10 +116,10 @@ class ExactOnlineConfig(object):
         return self.get_base_url()
 
     def get_client_id(self):
-        return native_string(self.get('application', 'client_id'))
+        return native_string(self.get('application', 'client_id', az_resource='kv'))
 
     def get_client_secret(self):
-        return native_string(self.get('application', 'client_secret'))
+        return native_string(self.get('application', 'client_secret', az_resource='kv'))
 
     # [transient]
     # ; These return something, or raise MissingSetting if they are
@@ -129,22 +129,22 @@ class ExactOnlineConfig(object):
 
     def get_access_expiry(self):
         return int(self.get_or_set_default(
-            'transient', 'access_expiry', '0'))
+            'transient', 'access_expiry', '0', az_resource='kv'))
 
     def set_access_expiry(self, value):
-        self.set('transient', 'access_expiry', native_string(value))
+        self.set('transient', 'access_expiry', native_string(value), az_resource='kv')
 
     def get_access_token(self):
-        return native_string(self.get('transient', 'access_token'))
+        return native_string(self.get('transient', 'access_token', az_resource='kv'))
 
     def set_access_token(self, value):
-        self.set('transient', 'access_token', native_string(value))
+        self.set('transient', 'access_token', native_string(value), az_resource='kv')
 
     def get_code(self):
-        return native_string(self.get('transient', 'code'))
+        return native_string(self.get('transient', 'code', az_resource='kv'))
 
     def set_code(self, value):
-        self.set('transient', 'code', native_string(value))
+        self.set('transient', 'code', native_string(value), az_resource='kv')
 
     def get_division(self):
         return int(self.get('transient', 'division'))
@@ -153,10 +153,10 @@ class ExactOnlineConfig(object):
         self.set('transient', 'division', native_string(value))
 
     def get_refresh_token(self):
-        return native_string(self.get('transient', 'refresh_token'))
+        return native_string(self.get('transient', 'refresh_token', az_resource='kv'))
 
     def set_refresh_token(self, value):
-        self.set('transient', 'refresh_token', native_string(value))
+        self.set('transient', 'refresh_token', native_string(value), az_resource='kv')
 
     # ; aliases
 
