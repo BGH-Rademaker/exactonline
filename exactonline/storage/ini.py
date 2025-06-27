@@ -127,22 +127,24 @@ class IniStorage(ExactOnlineConfig, ConfigParser):
             def get(self, section, option, *, raw=False, vars=None,
                     fallback=_UNSET):
         """
-        try:
-            ret = super(ExactOnlineConfig, self).get(section, option, **kwargs)
-            print(f"Fetching {option} from local INI file: {ret} and az_resource={az_resource}")
-        except (NoOptionError, NoSectionError):
-            raise MissingSetting(option, section)
+
+        ret = None
 
         if self.azure:
             secret, value = None, None
             if az_resource == 'kv':
-                secret = self.get_keyvault_secret(option)
-                print(f"Fetching secret {option} from Azure Key Vault: {secret}.")
+                ret = self.get_keyvault_secret(option)
+                print(f"Fetching secret {option} from Azure Key Vault: {ret}.")
             elif az_resource == 'ac':
-                value = self.get_app_config_value(option)
-                print(f"Fetching value {option} from Azure App Configuration: {value}.")
+                ret = self.get_app_config_value(option)
+                print(f"Fetching value {option} from Azure App Configuration: {ret}.")
 
-            ret = secret or value or ret
+        if ret is None:
+            try:
+                ret = super(ExactOnlineConfig, self).get(section, option, **kwargs)
+                print(f"Fetching {option} from local INI file: {ret} and az_resource={az_resource}")
+            except (NoOptionError, NoSectionError):
+                raise MissingSetting(option, section)
 
         return ret
 
