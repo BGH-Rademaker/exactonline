@@ -1,5 +1,12 @@
 Changes
 -------
+* v0.4.0+bgh:
+
+  - Refactor IniStorage.get method to improve Azure resource handling
+    and error management. This change ensures that the method can
+    handle different Azure resources (Key Vault, App Configuration,
+    local INI file) more effectively, providing better error messages
+    and handling missing settings gracefully.
 
 * v0.4.0+dev:
 
